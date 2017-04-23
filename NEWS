@@ -1,0 +1,36 @@
+v0.4 (2017-04-23)
+-----------------
+* Added data shuffling operators that use RDMA, and in particular UD
+  Send/Receive, RC Send/Receive and RC Read. A shuffle operation requires a
+  repartition and receive operator pair, or a broadcast and receive pair.
+  See drivers/sample_queries/shuffling-query/README.txt for an example.
+* Added MPI support, both drivers and data shuffling operators.
+* Added TCP/IP shuffling operator.
+* Added driver to execute multiple query fragments concurrently.
+* Supporting side-by-side compilation for MPI.
+* The "consumer" operator now can scan the input multiple times.
+* Aggregations now allow for a configurable number of slots per bucket.
+* Added repeated partitioned scan operator "repeatpartitionedscan".
+* Loading nothing no longer results in an error.
+* Renamed "generator_zipf" operator into "zipf_generator".
+
+v0.3 (UNRELEASED)
+-----------------
+* Hash joins now support composite keys.
+
+v0.2 (2016-05-24)
+-----------------
+* Added operators to interface with `perf` and extract system and hardware 
+  performance counters.
+* Added operators to obtain call counts and real-world time per thread per phase.
+* Added dedicated in-memory sort operator. No need to invoke PartitionOp only 
+  for its side-effect of producing sorted output!
+* Added looping scan operator for experiments.
+* Changed operator that generated uniformly random numbers. Added version for
+  Zipf-distributed values.
+* Hash joins can prefetch hash buckets (on both build and probe sides) and
+  can control which threads participate on the build and probe subtrees.
+
+v0.1 (2015-02-10)
+-----------------
+* Initial release.

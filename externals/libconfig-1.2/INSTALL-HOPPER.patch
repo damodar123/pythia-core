@@ -1,0 +1,13 @@
+--- libtool	2014-11-22 14:15:00.192591480 -0800
++++ libtool	2014-11-22 14:20:15.414001306 -0800
+@@ -779,6 +779,10 @@
+   arg="$1"
+   shift
+ 
++  # When installing dependency on hopper.nersc.gov the `$echo' variable in
++  # `libtool' is not set, causing problems throughout the script.
++  # This hack allows libtool to complete the build
++  echo=echo
+   case $arg in
+   -*=*) optarg=`$echo "X$arg" | $Xsed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+   *) optarg= ;;

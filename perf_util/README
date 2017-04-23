@@ -1,0 +1,4 @@
+These scripts are used in conjunction with the PerfCount_* operators. A script
+like ./measureMemLLCloads.sh should run in the background before the query
+starts, and the PerfCount_* operator must point its "startfifo" and "stopfifo"
+parameters to the FIFOs created by ./wait.start and ./wait.stop, respectively.

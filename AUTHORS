@@ -1,0 +1,10 @@
+Active contributors
+-------------------
+Spyros Blanas
+Feilong Liu
+
+Past contributors
+-----------------
+Willis Lang (SortLimit, Shuffle operators)
+Dan Gibson (Barrier, ProcessorMap stubs)
+Venkatraman Govindaraju (Bitonic sorting code)

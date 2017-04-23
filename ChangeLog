@@ -1,0 +1,112 @@
+v0.4 (2017-04-23)
+-----------------
+
+* Added data shuffling operators that use RDMA. 
+  Added RDMA-aware data shuffling operators that use UD Send/Receive, RC
+  Send/Receive and RC Read. Each operator has broadcast, repartition and
+  receive parts. Check drivers/sample_queries/shuffling-query/README.txt 
+  for an example.
+* Added MPI support, both drivers and data shuffling operators.
+  Added an MPI-aware driver (mpiexecute) and MPI-aware data shuffling operators.
+* Added TCP/IP shuffling operator.
+  Added a shuffling operator that uses TCP/IP. Receiver is "datarecvertcp",
+  repartition is "datasendershuffletcp", broadcast is "datasenderbcasttcp".
+* Added driver to execute multiple query fragments concurrently.
+  The "executemultiplequery" driver executes (up to 32) concurrent query plan
+  fragments by spawning different processes for each. The query fragments can
+  be distributed, and the "executemultiplequery" driver sycnrhonizes query
+  fragments to ensure that all query plans finish threadInit before execution.
+* Supporting side-by-side compilation for MPI.
+  Drivers compiled with vanila g++ now have the suffix ".no-mpi", while
+  drivers compiled with the MPI toolchain have the suffix ".with-mpi".
+* The "consumer" operator now can scan the input multiple times.
+  The ConsumeOp operator now takes a "repeat" parameter to control how many
+  times it will go over each block of input. This is a crude mechanism to
+  adjust the CPU cost of the consume.
+* Aggregations now allow for a configurable number of slots per bucket.
+  Users can now set the "slotperbucket" parameter to set how many tuples
+  should the hash table store per bucket during an aggregation.
+* Added repeated partitioned scan operator "repeatpartitionedscan".
+  Inherits all parameters and functionality of PartitionedScanOp, and adds
+  integer parameter "repeat" that controls how many times the operator will
+  scan the base data.
+* Loading nothing no longer results in an error.
+  Loading emtpy binary files will never fail with GLOB_FAILED, even if there
+  is no file to load. Instead, the scan will return nothing. GLOB_FAILED will
+  still be returned if no files match the prefix that was requested. 
+* Renamed "generator_zipf" into "zipf_generator".
+
+v0.3 (UNRELEASED)
+-----------------
+
+* Added composite key join capability for hash-based joins.
+  HashJoinOp now also accepts a vector of attributes to join on. Hashing still
+  happens on the first attribute (unless "bytes" hashing is used and the
+  attributes are contiguous in memory), but non-matching composite keys will
+  not be materialized at the output.
+
+v0.2 (2016-05-24)
+-----------------
+
+* Added operator "perfcount_scanstart". 
+  Calls `perf` to measure hardware performance counters of interest during
+  scanStart().
+
+* Added operator "perfcount_getnext". 
+  Calls `perf` to measure hardware performance counters of interest during
+  all getNext() calls between scanStart() and scanStop().
+
+* Added operator "perfcount_all". 
+  Calls `perf` to measure hardware performance counters of interest between
+  scanStart() and scanStop(). This logically combines the functionality of the
+  "perfcount_scanstart" and "perfcount_getnext" variants.
+
+* Added operator "printer_getnextcallcount".
+  Records the number of getNext() function calls.
+
+* Added operator "repeatparallelscan".
+  A ParallelScanOp that scans the same file multiple times. Useful for
+  experiments.
+
+* Added operator "sort".
+  Operator consumes, buffers and sorts input on scanStart(), then produces
+  data in sorted per-thread runs during getNext(). This sorting functionality
+  could so far be invoked only via the PartitionOp and this new operator
+  corrects this.
+
+* Added operator "time_accountant".
+  Operator accounts for elapsed seconds per thread per phase. It uses
+  clock_gettime() and the CLOCK_MONOTONIC_RAW clock.
+
+* Modified operator "generator_int".
+  Modified generator to return tuples with three long integers. Useful for
+  experiments.
+
+* Added operator "generator_zipf".
+  A twist on "generator_int" that returns values based on the Zipf distribution.
+
+* Modified operator "hashjoin", util/buffer.h, util/hashtable.h and
+util/hashtable.cpp.
+  The hash join operator can now prefetch hash buckets both during the build
+  and probe phases. Keeps track of more accurate allocation statistics,
+  although the functionality to free the hash table early is not implemented.
+
+* Modified join operators.
+  Join operators now accept the "leftthread" parameter to control which
+  threads will participate in the build and probe phases.  
+
+* Modified drivers/executequery.cpp
+  Also prints time using clock_gettime with CLOCK_MONOTONIC and memory
+  allocation timing information. 
+
+* Modified util/numaallocate.cpp
+  Now allocator prefers huge TLB pages, if available and allocation is
+  a multiple of the huge TLB page size.
+
+* Added util/cpufreq.h and util/cpufreq.cpp
+  Obtain estimation of frequency (in MHz) of the first CPU in the system, as
+  listed by /proc/cpuinfo.
+
+* Edited util/numaasserts.cpp and util/numaasserts.h
+  Added function to print NUMA placement of all pages in a specific address
+  range in virtual memory.
